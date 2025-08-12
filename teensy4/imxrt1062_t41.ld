@@ -4,7 +4,7 @@ MEMORY
 	DTCM (rwx):  ORIGIN = 0x20000000, LENGTH = 512K
 	RAM (rwx):   ORIGIN = 0x20200000, LENGTH = 512K
 	FLASH (rwx): ORIGIN = 0x60000000, LENGTH = 7936K
-	ERAM (rwx):  ORIGIN = 0x70000000, LENGTH = 32768K
+	ERAM (rwx):  ORIGIN = 0x70000000, LENGTH = 16384K
 }
 
 ENTRY(ImageVectorTable)
@@ -23,6 +23,7 @@ SECTIONS
 	.text.code : {
 		KEEP(*(.startup))
 		*(.flashmem*)
+		*(.text*)
 		. = ALIGN(4);
 		KEEP(*(.init))
 		__preinit_array_start = .;
@@ -42,7 +43,6 @@ SECTIONS
 	.text.itcm : {
 		. = . + 32; /* MPU to trap NULL pointer deref */
 		*(.fastrun)
-		*(.text*)
 		. = ALIGN(16);
 	} > ITCM  AT> FLASH
 
@@ -50,7 +50,7 @@ SECTIONS
 		__exidx_start = .;
 		*(.ARM.exidx* .ARM.extab.text* .gnu.linkonce.armexidx.*)
 		__exidx_end = .;
-	} > ITCM  AT> FLASH
+	} > FLASH
 
 	.data : {
 		*(.endpoint_queue)   
